@@ -9,17 +9,17 @@ class TestLeafNode(unittest.TestCase):
         self.assertRaises(ValueError, node.to_html)
 
     def test_to_html_with_value_no_tag(self):
-        node = LeafNode(None, "this is a leaf node")
+        node = LeafNode("this is a leaf node")
         self.assertEqual(node.to_html(), "this is a leaf node")
 
     def test_to_html_no_props(self):
-        node = LeafNode("p", "this is a leaf node")
+        node = LeafNode("this is a leaf node", "p")
         self.assertEqual(node.to_html(), "<p>this is a leaf node</p>")
 
     def test_to_html_with_props(self):
         node = LeafNode(
-            "p",
             "this is a leaf node",
+            "a",
             {
                 "href": "https://www.google.com",
                 "target": "_blank",
@@ -27,7 +27,7 @@ class TestLeafNode(unittest.TestCase):
         )
         self.assertEqual(
             node.to_html(),
-            '<p href="https://www.google.com" target="_blank">this is a leaf node</p>',
+            '<a href="https://www.google.com" target="_blank">this is a leaf node</a>',
         )
 
 

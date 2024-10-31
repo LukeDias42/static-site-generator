@@ -12,7 +12,7 @@ class HTMLNode:
         result = ""
         if self.props is not None:
             for prop in self.props:
-                result = f'{result} {prop}="{self.props[prop]}"'
+                result += f' {prop}="{self.props[prop]}"'
         return result
 
     def __repr__(self) -> str:

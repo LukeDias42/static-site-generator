@@ -1,6 +1,10 @@
 import unittest
 
-from inline_markdown import split_nodes_delimiter
+from inline_markdown import (
+    extract_markdown_images,
+    extract_markdown_links,
+    split_nodes_delimiter,
+)
 from textnode import TextNode, TextType
 
 
@@ -85,6 +89,44 @@ class TestTextNode(unittest.TestCase):
                 TextNode("italic", TextType.ITALIC),
                 TextNode(" text node", TextType.TEXT),
             ],
+        )
+
+    def test_extract_markdown_images_with_nothing(self):
+        text = "This is just a plain text"
+        self.assertEqual(extract_markdown_images(text), [])
+
+    def test_extract_markdown_images_with_image(self):
+        text = "This is a text with ![an image](imageurl.com)"
+        self.assertEqual(extract_markdown_images(text), [("an image", "imageurl.com")])
+
+    def test_extract_markdown_images_with_many_images(self):
+        text = "This is a text with ![an image](imageurl.com) and ![another image](imageurl.com/another)"
+        self.assertEqual(
+            extract_markdown_images(text),
+            [("an image", "imageurl.com"), ("another image", "imageurl.com/another")],
+        )
+
+    def test_extract_markdown_images_with_link(self):
+        text = "This is a text with [a link](google.com)"
+        self.assertEqual(extract_markdown_images(text), [])
+
+    def test_extract_markdown_link_with_nothing(self):
+        text = "This is just a plain text"
+        self.assertEqual(extract_markdown_links(text), [])
+
+    def test_extract_markdown_link_with_image(self):
+        text = "This is a text with ![an image](imageurl.com)"
+        self.assertEqual(extract_markdown_links(text), [])
+
+    def test_extract_markdown_link_with_link(self):
+        text = "This is a text with [a link](google.com)"
+        self.assertEqual(extract_markdown_links(text), [("a link", "google.com")])
+
+    def test_extract_markdown_link_with_many_links(self):
+        text = "This is a text with [a link](google.com) and [another link](boot.dev)"
+        self.assertEqual(
+            extract_markdown_links(text),
+            [("a link", "google.com"), ("another link", "boot.dev")],
         )
 
 

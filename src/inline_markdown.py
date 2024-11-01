@@ -2,6 +2,23 @@ import re
 from textnode import TextNode, TextType
 
 
+def text_to_textnodes(text):
+    main_node = TextNode(text, TextType.TEXT)
+    return split_nodes_link(
+        split_nodes_image(
+            split_nodes_delimiter(
+                split_nodes_delimiter(
+                    split_nodes_delimiter([main_node], "**", TextType.BOLD),
+                    "*",
+                    TextType.ITALIC,
+                ),
+                "`",
+                TextType.CODE,
+            )
+        )
+    )
+
+
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for old_node in old_nodes:
@@ -23,22 +40,13 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     return new_nodes
 
 
-def extract_markdown_images(text):
-    image_regex = r"\!\[(.*?)\]\((.*?)\)"
-    result = re.findall(image_regex, text)
-    return result
-
-
-def extract_markdown_links(text):
-    link_regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
-    result = re.findall(link_regex, text)
-    return result
-
-
 def split_nodes_image(old_nodes):
     image_regex = r"\!\[.*?\]\(.*?\)"
     new_nodes = []
     for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT.value:
+            new_nodes.append(old_node)
+            continue
         sections = re.split(image_regex, old_node.text)
         split_nodes = []
         images_data = extract_markdown_images(old_node.text)
@@ -57,6 +65,9 @@ def split_nodes_link(old_nodes):
     link_regex = r"(?<!!)\[.*?\]\(.*?\)"
     new_nodes = []
     for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT.value:
+            new_nodes.append(old_node)
+            continue
         sections = re.split(link_regex, old_node.text)
         split_nodes = []
         link_data = extract_markdown_links(old_node.text)
@@ -69,3 +80,15 @@ def split_nodes_link(old_nodes):
                 )
         new_nodes.extend(split_nodes)
     return new_nodes
+
+
+def extract_markdown_images(text):
+    image_regex = r"\!\[(.*?)\]\((.*?)\)"
+    result = re.findall(image_regex, text)
+    return result
+
+
+def extract_markdown_links(text):
+    link_regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
+    result = re.findall(link_regex, text)
+    return result

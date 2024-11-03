@@ -78,6 +78,34 @@ class TestBlockMarkdown(unittest.TestCase):
                 self.assertEqual(block_to_block_type(
                     block), BlockType.PARAGRAPH)
 
+    def test_block_to_block_type_valid_unordered_lists(self):
+        valid_unordered_lists = [
+            "* item 1",
+            "- item 1",
+            "* item 1\n* item 2",
+            "- item 1\n- item 2",
+            "* item 1\n- item 2",
+        ]
+
+        for block in valid_unordered_lists:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.UNORDERED_LIST)
+
+    def test_block_to_block_type_invalid_unordered_lists(self):
+        invalid_unordered_lists = [
+            "** incorrect symbol",
+            "no items",
+            "* correct item\n-- incorrect item",
+            "-incorrect item",
+            "    * incorrect item",
+        ]
+
+        for block in invalid_unordered_lists:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.PARAGRAPH)
+
     def test_markdown_to_blocks_clean(self):
         markdown = """    # This is a heading
 

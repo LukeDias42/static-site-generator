@@ -21,7 +21,7 @@ unordered_list_regex = r"^[-*]\s+"
 
 
 def block_to_block_type(block: str) -> BlockType:
-    if re.match(heading_regex, block):
+    if re.match(heading_regex, block) and len(block.splitlines()) == 1:
         return BlockType.HEADING
     if re.match(code_regex, block):
         return BlockType.CODE

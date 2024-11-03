@@ -18,6 +18,8 @@ def markdown_to_blocks(markdown: str) -> list[str]:
 heading_regex = r"^#{1,6}\s"
 code_regex = r"^```[\s\S]*?\S[\s\S]*?```$"
 unordered_list_regex = r"^[-*]\s+"
+
+
 def block_to_block_type(block: str) -> BlockType:
     if re.match(heading_regex, block):
         return BlockType.HEADING
@@ -27,4 +29,9 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.QUOTE
     if all(re.match(unordered_list_regex, line) for line in block.splitlines()):
         return BlockType.UNORDERED_LIST
+    if all(
+        re.match(rf"^{index+1}\.\s+", line)
+        for index, line in enumerate(block.splitlines())
+    ):
+        return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH

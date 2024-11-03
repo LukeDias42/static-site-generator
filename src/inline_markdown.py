@@ -55,7 +55,8 @@ def split_nodes_image(old_nodes):
                 split_nodes.append(TextNode(sections[i], TextType.TEXT))
             if i < len(sections) - 1:
                 split_nodes.append(
-                    TextNode(images_data[i][0], TextType.IMAGE, images_data[i][1])
+                    TextNode(images_data[i][0],
+                             TextType.IMAGE, images_data[i][1])
                 )
         new_nodes.extend(split_nodes)
     return new_nodes

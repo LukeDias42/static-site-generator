@@ -2,7 +2,7 @@ import re
 from textnode import TextNode, TextType
 
 
-def text_to_textnodes(text):
+def text_to_textnodes(text: str) -> list[TextNode]:
     main_node = TextNode(text, TextType.TEXT)
     return split_nodes_link(
         split_nodes_image(
@@ -19,7 +19,9 @@ def text_to_textnodes(text):
     )
 
 
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
+def split_nodes_delimiter(
+    old_nodes: list[TextNode], delimiter: str, text_type: TextType
+) -> list[TextNode]:
     new_nodes = []
     for old_node in old_nodes:
         if old_node.text_type != TextType.TEXT.value:
@@ -40,7 +42,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     return new_nodes
 
 
-def split_nodes_image(old_nodes):
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     image_regex = r"\!\[.*?\]\(.*?\)"
     new_nodes = []
     for old_node in old_nodes:
@@ -62,7 +64,7 @@ def split_nodes_image(old_nodes):
     return new_nodes
 
 
-def split_nodes_link(old_nodes):
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     link_regex = r"(?<!!)\[.*?\]\(.*?\)"
     new_nodes = []
     for old_node in old_nodes:
@@ -83,13 +85,13 @@ def split_nodes_link(old_nodes):
     return new_nodes
 
 
-def extract_markdown_images(text):
+def extract_markdown_images(text: str) -> list[str]:
     image_regex = r"\!\[(.*?)\]\((.*?)\)"
     result = re.findall(image_regex, text)
     return result
 
 
-def extract_markdown_links(text):
+def extract_markdown_links(text: str) -> list[str]:
     link_regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
     result = re.findall(link_regex, text)
     return result

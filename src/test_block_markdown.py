@@ -30,6 +30,31 @@ class TestBlockMarkdown(unittest.TestCase):
                 self.assertEqual(block_to_block_type(
                     block), BlockType.PARAGRAPH)
 
+    def test_block_to_block_type_valid_codes(self):
+        valid_codes = [
+            "```inline code```",
+            "```python\nprint('Hello, World!')```",
+            "```python\nprint('Hello, World!')\n```",
+            "```python\ndef main():\n  print('Hello, World!')\n```",
+        ]
+        for block in valid_codes:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(block), BlockType.CODE)
+
+    def test_block_to_block_type_invalid_codes(self):
+        invalid_codes = [
+            "``missing backtick start```",
+            "```missing backtick end``",
+            "no back tick",
+            "``````",
+            "```        ```",
+            "```\t\n\r\n```",
+        ]
+        for block in invalid_codes:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.PARAGRAPH)
+
     def test_markdown_to_blocks_clean(self):
         markdown = """    # This is a heading
 

@@ -23,6 +23,7 @@ class TestBlockMarkdown(unittest.TestCase):
             " # heading after space",
             "###heading without space",
             "no heading at all",
+            "# Multiline heading makes\nno sense",
         ]
         for block in invalid_headings:
             with self.subTest(block=block):

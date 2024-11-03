@@ -55,6 +55,29 @@ class TestBlockMarkdown(unittest.TestCase):
                 self.assertEqual(block_to_block_type(
                     block), BlockType.PARAGRAPH)
 
+    def test_block_to_block_type_valid_quotes(self):
+        valid_quotes = [
+            "> A single quote",
+            "> First quote\n> Second quote",
+            "> A quote\n>\n> An empty and another quote",
+            ">\n>\n>\n>",
+            ">Very close quote",
+        ]
+        for block in valid_quotes:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+
+    def test_block_to_block_type_invalid_quotes(self):
+        invalid_quotes = [
+            " > trailing space",
+            "no quote",
+            "a > start without >",
+        ]
+        for block in invalid_quotes:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.PARAGRAPH)
+
     def test_markdown_to_blocks_clean(self):
         markdown = """    # This is a heading
 

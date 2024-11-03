@@ -22,4 +22,6 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.HEADING
     if re.match(code_regex, block):
         return BlockType.CODE
+    if all(line.startswith(">") for line in block.splitlines()):
+        return BlockType.QUOTE
     return BlockType.PARAGRAPH

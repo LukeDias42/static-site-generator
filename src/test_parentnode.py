@@ -4,7 +4,7 @@ from parentnode import ParentNode
 from leafnode import LeafNode
 
 
-class TestLeafNode(unittest.TestCase):
+class TestParentNode(unittest.TestCase):
     def test_to_html_no_tag(self):
         node = ParentNode(None, None)
         self.assertRaises(ValueError, node.to_html)

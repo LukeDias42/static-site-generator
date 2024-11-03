@@ -11,7 +11,7 @@ from inline_markdown import (
 from textnode import TextNode, TextType
 
 
-class TestTextNode(unittest.TestCase):
+class TestInlineMarkdown(unittest.TestCase):
     def test_text_to_text_nodes(self):
         text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         self.maxDiff = None
@@ -121,13 +121,15 @@ class TestTextNode(unittest.TestCase):
 
     def test_extract_markdown_images_with_image(self):
         text = "This is a text with ![an image](imageurl.com)"
-        self.assertEqual(extract_markdown_images(text), [("an image", "imageurl.com")])
+        self.assertEqual(extract_markdown_images(
+            text), [("an image", "imageurl.com")])
 
     def test_extract_markdown_images_with_many_images(self):
         text = "This is a text with ![an image](imageurl.com) and ![another image](imageurl.com/another)"
         self.assertEqual(
             extract_markdown_images(text),
-            [("an image", "imageurl.com"), ("another image", "imageurl.com/another")],
+            [("an image", "imageurl.com"),
+             ("another image", "imageurl.com/another")],
         )
 
     def test_extract_markdown_images_with_link(self):
@@ -144,7 +146,8 @@ class TestTextNode(unittest.TestCase):
 
     def test_extract_markdown_link_with_link(self):
         text = "This is a text with [a link](google.com)"
-        self.assertEqual(extract_markdown_links(text), [("a link", "google.com")])
+        self.assertEqual(extract_markdown_links(
+            text), [("a link", "google.com")])
 
     def test_extract_markdown_link_with_many_links(self):
         text = "This is a text with [a link](google.com) and [another link](boot.dev)"
@@ -190,7 +193,8 @@ class TestTextNode(unittest.TestCase):
                 TextNode("This is a text node with ", TextType.TEXT),
                 TextNode("an image", TextType.IMAGE, "imageurl.com"),
                 TextNode(" and ", TextType.TEXT),
-                TextNode("another image", TextType.IMAGE, "imageurl.com/another"),
+                TextNode("another image", TextType.IMAGE,
+                         "imageurl.com/another"),
                 TextNode(".", TextType.TEXT),
             ],
         )
@@ -228,7 +232,8 @@ class TestTextNode(unittest.TestCase):
                 TextNode("an image", TextType.IMAGE, "imageurl.com"),
                 TextNode(".", TextType.TEXT),
                 TextNode("This is another text node with ", TextType.TEXT),
-                TextNode("another image", TextType.IMAGE, "imageurl.com/another"),
+                TextNode("another image", TextType.IMAGE,
+                         "imageurl.com/another"),
                 TextNode(".", TextType.TEXT),
             ],
         )
@@ -244,7 +249,8 @@ class TestTextNode(unittest.TestCase):
 
     def test_split_nodes_link_one_link(self):
         nodes = [
-            TextNode("This is a text node with [a link](google.com).", TextType.TEXT)
+            TextNode(
+                "This is a text node with [a link](google.com).", TextType.TEXT)
         ]
         self.assertListEqual(
             split_nodes_link(nodes),

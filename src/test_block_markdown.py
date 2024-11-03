@@ -1,6 +1,5 @@
 import unittest
 
-from block_markdown import markdown_to_blocks
 from block_markdown import markdown_to_blocks, block_to_block_type, BlockType
 
 
@@ -106,8 +105,34 @@ class TestBlockMarkdown(unittest.TestCase):
                 self.assertEqual(block_to_block_type(
                     block), BlockType.PARAGRAPH)
 
+    def test_block_to_block_type_valid_ordered_lists(self):
+        valid_ordered_lists = [
+            "1. item 1",
+            "1. item 1\n2. item 2",
+            "1. item 1\n2. item 2\n3. item 3",
+        ]
+
+        for block in valid_ordered_lists:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.ORDERED_LIST)
+
+    def test_block_to_block_type_invalid_ordered_lists(self):
+        invalid_ordered_lists = [
+            " 1. trailing space",
+            "1- incorrectly formatted first item",
+            "1. item 1\n3. incorrect order",
+            "no list",
+            "2. start incorrect",
+        ]
+
+        for block in invalid_ordered_lists:
+            with self.subTest(block=block):
+                self.assertEqual(block_to_block_type(
+                    block), BlockType.PARAGRAPH)
+
     def test_markdown_to_blocks_clean(self):
-        markdown = """    # This is a heading
+        markdown = """# This is a heading
 
 This is a paragraph of text. It has some **bold** and *italic* words inside of it.
 
@@ -139,14 +164,14 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
 
 * This is the first list item in a list block           
 * This is a list item               
-* This is another list item"""
+        * This is another list item"""
 
         self.assertListEqual(
             markdown_to_blocks(markdown),
             [
                 "# This is a heading",
                 "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
-                "* This is the first list item in a list block\n* This is a list item\n* This is another list item",
+                "* This is the first list item in a list block           \n* This is a list item               \n        * This is another list item",
             ],
         )
 

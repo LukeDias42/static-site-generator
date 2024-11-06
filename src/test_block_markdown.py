@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 import unittest
 
 from block_markdown import markdown_to_blocks, block_to_block_type, BlockType
@@ -138,40 +139,38 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
 * This is a list item
 * This is another list item"""
 
-        self.assertListEqual(
-            markdown_to_blocks(markdown),
-            [
-                "# This is a heading",
-                "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
-                "* This is the first list item in a list block\n* This is a list item\n* This is another list item",
-            ],
-        )
+        expected: Sequence[str] = [
+            "# This is a heading",
+            "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
+            "* This is the first list item in a list block\n* This is a list item\n* This is another list item",
+        ]
+
+        self.assertEqual(markdown_to_blocks(markdown), expected)
 
     def test_markdown_to_blocks_messy(self):
         markdown = """    # This is a heading
 
 
-                This is a paragraph of text. It has some **bold** and *italic* words inside of it.                      
-            
-                
+                This is a paragraph of text. It has some **bold** and *italic* words inside of it.
 
 
 
 
 
 
-* This is the first list item in a list block           
-* This is a list item               
+
+
+* This is the first list item in a list block\t\t\t
+* This is a list item\t
         * This is another list item"""
 
-        self.assertListEqual(
-            markdown_to_blocks(markdown),
-            [
-                "# This is a heading",
-                "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
-                "* This is the first list item in a list block           \n* This is a list item               \n        * This is another list item",
-            ],
-        )
+        blocks = markdown_to_blocks(markdown)
+        expected: Sequence[str] = [
+            "# This is a heading",
+            "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
+            "* This is the first list item in a list block\t\t\t\n* This is a list item\t\n        * This is another list item",
+        ]
+        self.assertEqual(blocks, expected)
 
 
 if __name__ == "__main__":

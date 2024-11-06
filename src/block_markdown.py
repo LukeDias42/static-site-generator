@@ -4,12 +4,12 @@ import re
 
 from htmlnode import HTMLNode
 from inline_markdown import text_to_textnodes
-from parentnode import ParentNode
 from leafnode import LeafNode
+from parentnode import ParentNode
 from textnode import text_nodes_to_html_nodes
 
 heading_regex = r"^(#{1,6}) ([^\n]+)$"
-code_regex = r"^```\s*?(\S[\s\S]*?)```$"
+code_regex = r"^```\s*?(\S[\s\S]*?)\n?```$"
 unordered_list_regex = r"^[-*] (.*)"
 quote_regex = r"^>\s?(.*)"
 

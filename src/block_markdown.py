@@ -38,6 +38,8 @@ def block_to_html(block: str) -> HTMLNode:
         return extract_quotes_from_block(block)
     elif block_type == BlockType.CODE:
         return extract_code_from_block(block)
+    elif block_type == BlockType.UNORDERED_LIST:
+        return extract_unordered_list_from_block(block)
 
 
 def block_to_block_type(block: str) -> BlockType:
@@ -86,6 +88,17 @@ def extract_code_from_block(block: str) -> ParentNode:
     text = matches.group(1)
     code = LeafNode(text, "code")
     return ParentNode("pre", [code])
+
+
+def extract_unordered_list_from_block(block: str) -> ParentNode:
+    children: list[HTMLNode] = []
+    for item in block.splitlines():
+        matches = re.search(unordered_list_regex, item)
+        if matches is None:
+            raise ValueError("Invalid unordered list")
+        item_text = matches.group(1)
+        children.append(ParentNode("li", text_to_leaf_nodes(item_text)))
+    return ParentNode("ul", children)
 
 
 def text_to_leaf_nodes(text: str) -> Sequence[HTMLNode]:

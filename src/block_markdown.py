@@ -31,7 +31,7 @@ def block_to_block_type(block: str) -> BlockType:
     if all(re.match(unordered_list_regex, line) for line in block.splitlines()):
         return BlockType.UNORDERED_LIST
     if all(
-        re.match(rf"^{index+1}\.\s+", line)
+        re.match(rf"^{index+1}\. .*", line)
         for index, line in enumerate(block.splitlines())
     ):
         return BlockType.ORDERED_LIST

@@ -10,12 +10,86 @@ from block_markdown import (
     markdown_to_blocks,
     block_to_block_type,
     BlockType,
+    markdown_to_html,
 )
 from leafnode import LeafNode
 from parentnode import ParentNode
 
 
 class TestBlockMarkdown(unittest.TestCase):
+    def test_markdown_to_html(self):
+        markdown = """# This is a heading
+
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+```
+# A fancy code block~~
+```
+
+## This is another heading for the list:
+
+* This is the first item
+* This is the second item
+- This is **another** list item
+
+### This is another heading for the ordered list:
+
+1. This is the first item
+2. `This is another fancy code~~`
+3. Too many *cool* items!"""
+
+        self.assertEqual(
+            markdown_to_html(markdown),
+            [
+                LeafNode("This is a heading", "h1"),
+                ParentNode(
+                    "p",
+                    [
+                        LeafNode("This is a paragraph of text. It has some "),
+                        LeafNode("bold", "b"),
+                        LeafNode(" and "),
+                        LeafNode("italic", "i"),
+                        LeafNode(" words inside of it."),
+                    ],
+                ),
+                ParentNode("pre", [LeafNode("# A fancy code block~~", "code")]),
+                LeafNode("This is another heading for the list:", "h2"),
+                ParentNode(
+                    "ul",
+                    [
+                        ParentNode("li", [LeafNode("This is the first item")]),
+                        ParentNode("li", [LeafNode("This is the second item")]),
+                        ParentNode(
+                            "li",
+                            [
+                                LeafNode("This is "),
+                                LeafNode("another", "b"),
+                                LeafNode(" list item"),
+                            ],
+                        ),
+                    ],
+                ),
+                LeafNode("This is another heading for the ordered list:", "h3"),
+                ParentNode(
+                    "ol",
+                    [
+                        ParentNode("li", [LeafNode("This is the first item")]),
+                        ParentNode(
+                            "li", [LeafNode("This is another fancy code~~", "code")]
+                        ),
+                        ParentNode(
+                            "li",
+                            [
+                                LeafNode("Too many "),
+                                LeafNode("cool", "i"),
+                                LeafNode(" items!"),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+
     def test_extract_heading_from_block(self):
         test_cases: list[tuple[str, str, str]] = [
             # block, tag, value
@@ -86,7 +160,7 @@ class TestBlockMarkdown(unittest.TestCase):
                     "pre",
                     [
                         LeafNode(
-                            'python\ndef main():\n  print("Hello, World!")\nmain()\n',
+                            'python\ndef main():\n  print("Hello, World!")\nmain()',
                             "code",
                         )
                     ],

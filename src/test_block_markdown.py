@@ -27,8 +27,7 @@ class TestBlockMarkdown(unittest.TestCase):
         ]
         for block in invalid_headings:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.PARAGRAPH)
+                self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_block_to_block_type_valid_codes(self):
         valid_codes = [
@@ -52,8 +51,7 @@ class TestBlockMarkdown(unittest.TestCase):
         ]
         for block in invalid_codes:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.PARAGRAPH)
+                self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_block_to_block_type_valid_quotes(self):
         valid_quotes = [
@@ -75,11 +73,12 @@ class TestBlockMarkdown(unittest.TestCase):
         ]
         for block in invalid_quotes:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.PARAGRAPH)
+                self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_block_to_block_type_valid_unordered_lists(self):
         valid_unordered_lists = [
+            "* ",
+            "- ",
             "* item 1",
             "- item 1",
             "* item 1\n* item 2",
@@ -89,8 +88,7 @@ class TestBlockMarkdown(unittest.TestCase):
 
         for block in valid_unordered_lists:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.UNORDERED_LIST)
+                self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
 
     def test_block_to_block_type_invalid_unordered_lists(self):
         invalid_unordered_lists = [
@@ -103,24 +101,24 @@ class TestBlockMarkdown(unittest.TestCase):
 
         for block in invalid_unordered_lists:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.PARAGRAPH)
+                self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_block_to_block_type_valid_ordered_lists(self):
         valid_ordered_lists = [
             "1. item 1",
+            "1. ",
             "1. item 1\n2. item 2",
             "1. item 1\n2. item 2\n3. item 3",
         ]
 
         for block in valid_ordered_lists:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.ORDERED_LIST)
+                self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
 
     def test_block_to_block_type_invalid_ordered_lists(self):
         invalid_ordered_lists = [
             " 1. trailing space",
+            "1.too close",
             "1- incorrectly formatted first item",
             "1. item 1\n3. incorrect order",
             "no list",
@@ -129,8 +127,7 @@ class TestBlockMarkdown(unittest.TestCase):
 
         for block in invalid_ordered_lists:
             with self.subTest(block=block):
-                self.assertEqual(block_to_block_type(
-                    block), BlockType.PARAGRAPH)
+                self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_markdown_to_blocks_clean(self):
         markdown = """# This is a heading

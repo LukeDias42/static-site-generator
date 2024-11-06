@@ -36,6 +36,8 @@ def block_to_html(block: str) -> HTMLNode:
         return extract_heading_from_block(block)
     elif block_type == BlockType.QUOTE:
         return extract_quotes_from_block(block)
+    elif block_type == BlockType.CODE:
+        return extract_code_from_block(block)
 
 
 def block_to_block_type(block: str) -> BlockType:
@@ -77,6 +79,13 @@ def extract_quotes_from_block(block: str) -> ParentNode:
     return ParentNode("quoteblock", children)
 
 
+def extract_code_from_block(block: str) -> ParentNode:
+    matches = re.search(code_regex, block)
+    if matches is None:
+        raise ValueError("Invalid code")
+    text = matches.group(1)
+    code = LeafNode(text, "code")
+    return ParentNode("pre", [code])
 
 
 def text_to_leaf_nodes(text: str) -> Sequence[HTMLNode]:

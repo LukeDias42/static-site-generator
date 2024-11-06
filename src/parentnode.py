@@ -1,8 +1,14 @@
+from typing_extensions import Optional, Sequence
 from htmlnode import HTMLNode
 
 
 class ParentNode(HTMLNode):
-    def __init__(self, tag, children, props=None):
+    def __init__(
+        self,
+        tag: str,
+        children: Sequence[HTMLNode],
+        props: Optional[dict[str, str]] = None,
+    ):
         super().__init__(tag, None, children, props)
 
     def to_html(self) -> str:

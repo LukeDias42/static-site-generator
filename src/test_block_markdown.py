@@ -2,9 +2,50 @@ from collections.abc import Sequence
 import unittest
 
 from block_markdown import markdown_to_blocks, block_to_block_type, BlockType
+from block_markdown import (
+    extract_code_from_block,
+    extract_heading_from_block,
+    extract_ordered_list_from_block,
+    extract_quotes_from_block,
+    extract_unordered_list_from_block,
+    markdown_to_blocks,
+    block_to_block_type,
+    BlockType,
+)
+from leafnode import LeafNode
+from parentnode import ParentNode
 
 
 class TestBlockMarkdown(unittest.TestCase):
+    def test_extract_heading_from_block(self):
+        test_cases: list[tuple[str, str, str]] = [
+            # block, tag, value
+            ("# heading 1", "h1", "heading 1"),
+            ("## heading 2", "h2", "heading 2"),
+            ("### heading 3", "h3", "heading 3"),
+            ("#### heading 4", "h4", "heading 4"),
+            ("##### heading 5", "h5", "heading 5"),
+            ("###### heading 6", "h6", "heading 6"),
+        ]
+        for test_case in test_cases:
+            with self.subTest(block=test_case[0]):
+                block = test_case[0]
+                leaf_node = extract_heading_from_block(block)
+                self.assertEqual(leaf_node.tag, test_case[1])
+                self.assertEqual(leaf_node.value, test_case[2])
+
+    def test_extract_heading_from_block_incorrect(self):
+        invalid_blocks = [
+            "######## heading 7",
+            " # heading after space",
+            "###heading without space",
+            "no heading at all",
+            "# Multiline heading makes\nno sense",
+        ]
+        for block in invalid_blocks:
+            with self.subTest(block=block):
+                self.assertRaises(ValueError, extract_heading_from_block, block)
+
     def test_block_to_block_type_valid_headings(self):
         valid_headings = [
             "# heading 1",

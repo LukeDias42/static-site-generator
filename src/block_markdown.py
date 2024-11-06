@@ -43,7 +43,7 @@ def block_to_html(block: str) -> HTMLNode:
         return extract_unordered_list_from_block(block)
     elif block_type == BlockType.ORDERED_LIST:
         return extract_ordered_list_from_block(block)
-    raise ValueError("Incorrect Block Type")
+    return ParentNode("p", text_to_leaf_nodes(block))
 
 
 def block_to_block_type(block: str) -> BlockType:

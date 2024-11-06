@@ -1,7 +1,6 @@
 from collections.abc import Sequence
 import unittest
 
-from block_markdown import markdown_to_blocks, block_to_block_type, BlockType
 from block_markdown import (
     extract_code_from_block,
     extract_heading_from_block,
@@ -73,6 +72,44 @@ class TestBlockMarkdown(unittest.TestCase):
         for block in invalid_blocks:
             with self.subTest(block=block):
                 self.assertRaises(ValueError, extract_quotes_from_block, block)
+
+    def test_extract_code_from_block(self):
+        test_cases: list[tuple[str, ParentNode]] = [
+            # block, expected
+            (
+                '```print("Hello, World!")```',
+                ParentNode("pre", [LeafNode('print("Hello, World!")', "code")]),
+            ),
+            (
+                '```python\ndef main():\n  print("Hello, World!")\nmain()\n```',
+                ParentNode(
+                    "pre",
+                    [
+                        LeafNode(
+                            'python\ndef main():\n  print("Hello, World!")\nmain()\n',
+                            "code",
+                        )
+                    ],
+                ),
+            ),
+        ]
+        for test_case in test_cases:
+            with self.subTest(block=test_case[0]):
+                block = test_case[0]
+                code_node = extract_code_from_block(block)
+                self.assertEqual(code_node, test_case[1])
+
+    def test_extract_code_from_block_incorrect(self):
+        invalid_blocks = [
+            "``````",
+            "```\n```",
+            '```print("Hello, World!")``',
+            '``print("Hello, World!")```',
+            'print("Hello, World!")',
+        ]
+        for block in invalid_blocks:
+            with self.subTest(block=block):
+                self.assertRaises(ValueError, extract_code_from_block, block)
 
     def test_block_to_block_type_valid_headings(self):
         valid_headings = [

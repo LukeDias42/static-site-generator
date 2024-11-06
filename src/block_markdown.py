@@ -3,6 +3,10 @@ from enum import Enum
 import re
 
 from htmlnode import HTMLNode
+from inline_markdown import text_to_textnodes
+from parentnode import ParentNode
+from leafnode import LeafNode
+from textnode import text_nodes_to_html_nodes
 heading_regex = r"^(#{1,6}) ([^\n]+)$"
 code_regex = r"^```\s*?(\S[\s\S]*?)```$"
 unordered_list_regex = r"^[-*] (.*)"
@@ -30,6 +34,8 @@ def block_to_html(block: str) -> HTMLNode:
     block_type = block_to_block_type(block)
     if block_type == BlockType.HEADING:
         return extract_heading_from_block(block)
+    elif block_type == BlockType.QUOTE:
+        return extract_quotes_from_block(block)
 
 
 def block_to_block_type(block: str) -> BlockType:
@@ -58,3 +64,25 @@ def extract_heading_from_block(block: str) -> LeafNode:
     return LeafNode(text, f"h{number_sign_amount}")
 
 
+def extract_quotes_from_block(block: str) -> ParentNode:
+    quotes = block.splitlines()
+    children = []
+    for quote in quotes:
+        matches = re.search(quote_regex, quote)
+        if matches is None:
+            raise ValueError(f"Invalid quote: {quote}")
+        if matches.group(1) == "":
+            continue
+        children.extend(text_to_leaf_nodes(matches.group(1)))
+    return ParentNode("quoteblock", children)
+
+
+
+
+def text_to_leaf_nodes(text: str) -> Sequence[HTMLNode]:
+    if text == "":
+        return []
+    text_nodes = text_to_textnodes(text)
+    if not text_nodes:
+        raise ValueError("Something went wrong when trying to get text nodes")
+    return text_nodes_to_html_nodes(text_nodes)

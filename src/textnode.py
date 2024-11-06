@@ -1,4 +1,5 @@
 from enum import Enum
+from typing_extensions import Optional
 from leafnode import LeafNode
 
 
@@ -12,7 +13,7 @@ class TextType(Enum):
 
 
 class TextNode:
-    def __init__(self, text, text_type, url=None):
+    def __init__(self, text: str, text_type: TextType, url: Optional[str] = None):
         self.text = text
         self.text_type = text_type.value
         self.url = url
@@ -30,6 +31,10 @@ class TextNode:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 
+def text_nodes_to_html_nodes(text_nodes: list[TextNode]) -> list[LeafNode]:
+    return [text_node_to_html_node(text_node) for text_node in text_nodes]
+
+
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     if text_node.text_type == TextType.TEXT.value:
         return LeafNode(text_node.text)
@@ -40,7 +45,7 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     if text_node.text_type == TextType.CODE.value:
         return LeafNode(text_node.text, "code")
     if text_node.text_type == TextType.LINK.value:
-        return LeafNode(text_node.text, "a", {"href": text_node.url})
+        return LeafNode(text_node.text, "a", {"href": text_node.url or ""})
     if text_node.text_type == TextType.IMAGE.value:
-        return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
+        return LeafNode("", "img", {"src": text_node.url or "", "alt": text_node.text})
     raise ValueError("Unkown Text Type")

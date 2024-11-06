@@ -7,6 +7,7 @@ from inline_markdown import text_to_textnodes
 from parentnode import ParentNode
 from leafnode import LeafNode
 from textnode import text_nodes_to_html_nodes
+
 heading_regex = r"^(#{1,6}) ([^\n]+)$"
 code_regex = r"^```\s*?(\S[\s\S]*?)```$"
 unordered_list_regex = r"^[-*] (.*)"
@@ -40,6 +41,9 @@ def block_to_html(block: str) -> HTMLNode:
         return extract_code_from_block(block)
     elif block_type == BlockType.UNORDERED_LIST:
         return extract_unordered_list_from_block(block)
+    elif block_type == BlockType.ORDERED_LIST:
+        return extract_ordered_list_from_block(block)
+    raise ValueError("Incorrect Block Type")
 
 
 def block_to_block_type(block: str) -> BlockType:
@@ -99,6 +103,18 @@ def extract_unordered_list_from_block(block: str) -> ParentNode:
         item_text = matches.group(1)
         children.append(ParentNode("li", text_to_leaf_nodes(item_text)))
     return ParentNode("ul", children)
+
+
+def extract_ordered_list_from_block(block: str) -> ParentNode:
+    children: list[HTMLNode] = []
+    for index, item in enumerate(block.splitlines()):
+        matches = re.search(rf"^{index+1}\. (.*)", item)
+        if matches is None:
+            raise ValueError("Invalid ordered list")
+        item_text = matches.group(1)
+        children.append(ParentNode("li", text_to_leaf_nodes(item_text)))
+
+    return ParentNode("ol", children)
 
 
 def text_to_leaf_nodes(text: str) -> Sequence[HTMLNode]:

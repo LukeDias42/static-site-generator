@@ -46,6 +46,34 @@ class TestBlockMarkdown(unittest.TestCase):
             with self.subTest(block=block):
                 self.assertRaises(ValueError, extract_heading_from_block, block)
 
+    def test_extract_quotes_from_block(self):
+        test_cases: list[tuple[str, ParentNode]] = [
+            # block, expected
+            ("> quote", ParentNode("quoteblock", [LeafNode("quote")])),
+            (">quote", ParentNode("quoteblock", [LeafNode("quote")])),
+            (
+                ">quote 1\n> quote 2",
+                ParentNode("quoteblock", [LeafNode("quote 1"), LeafNode("quote 2")]),
+            ),
+            (">", ParentNode("quoteblock", [])),
+            (">>>>", ParentNode("quoteblock", [LeafNode(">>>")])),
+        ]
+        for test_case in test_cases:
+            with self.subTest(block=test_case[0]):
+                block = test_case[0]
+                quote_node = extract_quotes_from_block(block)
+                self.assertEqual(quote_node, test_case[1])
+
+    def test_extract_quotes_from_block_incorrect(self):
+        invalid_blocks = [
+            "no greater than",
+            " > incorrect formatting",
+            "< incorrect symbol",
+        ]
+        for block in invalid_blocks:
+            with self.subTest(block=block):
+                self.assertRaises(ValueError, extract_quotes_from_block, block)
+
     def test_block_to_block_type_valid_headings(self):
         valid_headings = [
             "# heading 1",

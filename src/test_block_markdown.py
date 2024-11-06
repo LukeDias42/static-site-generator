@@ -111,6 +111,72 @@ class TestBlockMarkdown(unittest.TestCase):
             with self.subTest(block=block):
                 self.assertRaises(ValueError, extract_code_from_block, block)
 
+    def test_extract_ul_from_block(self):
+        test_cases: list[tuple[str, ParentNode]] = [
+            # block, expected
+            ("- item 1", ParentNode("ul", [ParentNode("li", [LeafNode("item 1")])])),
+            (
+                "- **bold item**",
+                ParentNode("ul", [ParentNode("li", [LeafNode("bold item", "b")])]),
+            ),
+            (
+                "- mixed **bold item** and *italic* item.",
+                ParentNode(
+                    "ul",
+                    [
+                        ParentNode(
+                            "li",
+                            [
+                                LeafNode("mixed "),
+                                LeafNode("bold item", "b"),
+                                LeafNode(" and "),
+                                LeafNode("italic", "i"),
+                                LeafNode(" item."),
+                            ],
+                        )
+                    ],
+                ),
+            ),
+            (
+                "- item 1\n- item 2\n* item 3",
+                ParentNode(
+                    "ul",
+                    [
+                        ParentNode("li", [LeafNode("item 1")]),
+                        ParentNode("li", [LeafNode("item 2")]),
+                        ParentNode("li", [LeafNode("item 3")]),
+                    ],
+                ),
+            ),
+            (
+                "- \n- \n* ",
+                ParentNode(
+                    "ul",
+                    [
+                        ParentNode("li", []),
+                        ParentNode("li", []),
+                        ParentNode("li", []),
+                    ],
+                ),
+            ),
+        ]
+        for test_case in test_cases:
+            with self.subTest(block=test_case[0]):
+                block = test_case[0]
+                ul_node = extract_unordered_list_from_block(block)
+                self.assertEqual(ul_node, test_case[1])
+
+    def test_extract_ul_from_block_incorrect(self):
+        invalid_blocks = [
+            " - incorrect formating",
+            "# incorrect symbol",
+            "-too close",
+            "--",
+        ]
+        for block in invalid_blocks:
+            with self.subTest(block=block):
+                self.assertRaises(ValueError, extract_unordered_list_from_block, block)
+
     def test_block_to_block_type_valid_headings(self):
         valid_headings = [
             "# heading 1",

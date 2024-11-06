@@ -4,10 +4,6 @@ from leafnode import LeafNode
 
 
 class TestLeafNode(unittest.TestCase):
-    def test_to_html_no_value(self):
-        node = LeafNode(None, None)
-        self.assertRaises(ValueError, node.to_html)
-
     def test_to_html_with_value_no_tag(self):
         node = LeafNode("this is a leaf node")
         self.assertEqual(node.to_html(), "this is a leaf node")

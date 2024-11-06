@@ -1,10 +1,13 @@
+from collections.abc import Sequence
 from enum import Enum
 import re
 
+from htmlnode import HTMLNode
 heading_regex = r"^(#{1,6}) ([^\n]+)$"
 code_regex = r"^```\s*?(\S[\s\S]*?)```$"
 unordered_list_regex = r"^[-*] (.*)"
 quote_regex = r"^>\s?(.*)"
+
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -15,10 +18,18 @@ class BlockType(Enum):
     ORDERED_LIST = "ordered_list"
 
 
-def markdown_to_blocks(markdown: str) -> list[str]:
+def markdown_to_html(markdown: str) -> Sequence[HTMLNode]:
+    return [block_to_html(block) for block in markdown_to_blocks(markdown)]
+
+
+def markdown_to_blocks(markdown: str) -> Sequence[str]:
     return [block.strip() for block in markdown.split("\n\n") if len(block) >= 1]
 
 
+def block_to_html(block: str) -> HTMLNode:
+    block_type = block_to_block_type(block)
+    if block_type == BlockType.HEADING:
+        return extract_heading_from_block(block)
 
 
 def block_to_block_type(block: str) -> BlockType:
@@ -36,3 +47,14 @@ def block_to_block_type(block: str) -> BlockType:
     ):
         return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
+
+
+def extract_heading_from_block(block: str) -> LeafNode:
+    matches = re.search(heading_regex, block)
+    if matches is None:
+        raise ValueError("Invalid heading")
+    number_sign_amount = len(matches.group(1))
+    text = matches.group(2)
+    return LeafNode(text, f"h{number_sign_amount}")
+
+

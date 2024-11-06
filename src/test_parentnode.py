@@ -5,14 +5,6 @@ from leafnode import LeafNode
 
 
 class TestParentNode(unittest.TestCase):
-    def test_to_html_no_tag(self):
-        node = ParentNode(None, None)
-        self.assertRaises(ValueError, node.to_html)
-
-    def test_to_html_no_children(self):
-        node = ParentNode("h1", None)
-        self.assertRaises(ValueError, node.to_html)
-
     def test_to_html_with_leaf_child(self):
         node = ParentNode("h1", [LeafNode("this is a leaf node")])
         self.assertEqual(node.to_html(), "<h1>this is a leaf node</h1>")

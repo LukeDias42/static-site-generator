@@ -177,6 +177,50 @@ class TestBlockMarkdown(unittest.TestCase):
             with self.subTest(block=block):
                 self.assertRaises(ValueError, extract_unordered_list_from_block, block)
 
+    def test_extract_ol_from_block(self):
+        test_cases: list[tuple[str, ParentNode]] = [
+            # block, expected
+            ("1. item 1", ParentNode("ol", [ParentNode("li", [LeafNode("item 1")])])),
+            (
+                "1. item 1\n2. item 2",
+                ParentNode(
+                    "ol",
+                    [
+                        ParentNode("li", [LeafNode("item 1")]),
+                        ParentNode("li", [LeafNode("item 2")]),
+                    ],
+                ),
+            ),
+            (
+                "1. \n2. ",
+                ParentNode(
+                    "ol",
+                    [
+                        ParentNode("li", []),
+                        ParentNode("li", []),
+                    ],
+                ),
+            ),
+        ]
+        for test_case in test_cases:
+            with self.subTest(block=test_case[0]):
+                block = test_case[0]
+                leaf_node = extract_ordered_list_from_block(block)
+                self.assertEqual(leaf_node, test_case[1])
+
+    def test_extract_ol_from_block_incorrect(self):
+        invalid_blocks = [
+            " 1. incorrect formating",
+            ".1 incorrect formating",
+            "1- incorrect symbol",
+            "1.too close",
+            "2. starting incorrectly",
+            "0. starting incorrectly",
+        ]
+        for block in invalid_blocks:
+            with self.subTest(block=block):
+                self.assertRaises(ValueError, extract_ordered_list_from_block, block)
+
     def test_block_to_block_type_valid_headings(self):
         valid_headings = [
             "# heading 1",

@@ -1,6 +1,6 @@
+import re
 from collections.abc import Sequence
 from enum import Enum
-import re
 
 from htmlnode import HTMLNode
 from inline_markdown import text_to_textnodes
@@ -117,7 +117,7 @@ def extract_ordered_list_from_block(block: str) -> ParentNode:
     return ParentNode("ol", children)
 
 
-def text_to_leaf_nodes(text: str) -> Sequence[HTMLNode]:
+def text_to_leaf_nodes(text: str) -> Sequence[LeafNode]:
     if text == "":
         return []
     text_nodes = text_to_textnodes(text)

@@ -1,8 +1,14 @@
 from htmlnode import HTMLNode
+from typing_extensions import Optional
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, value, tag=None, props=None):
+    def __init__(
+        self,
+        value: str,
+        tag: Optional[str] = None,
+        props: Optional[dict[str, str]] = None,
+    ):
         super().__init__(tag, value, None, props)
 
     def to_html(self) -> str:
